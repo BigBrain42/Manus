@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase Backend - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-database"></i>
+                <span>Supabase Backend</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#dashboard" class="nav-link active" data-page="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="#users" class="nav-link" data-page="users"><i class="fas fa-users"></i> Benutzer</a></li>
+                <li><a href="#products" class="nav-link" data-page="products"><i class="fas fa-box"></i> Produkte</a></li>
+                <li><a href="#orders" class="nav-link" data-page="orders"><i class="fas fa-shopping-cart"></i> Bestellungen</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <h1>Dashboard</h1>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon users-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Benutzer</h3>
+                            <p class="stat-number" id="stat-users">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon products-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Produkte</h3>
+                            <p class="stat-number" id="stat-products">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon orders-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Bestellungen</h3>
+                            <p class="stat-number" id="stat-orders">0</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon revenue-icon">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Gesamtumsatz</h3>
+                            <p class="stat-number" id="stat-revenue">€0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h2>Schnellzugriff</h2>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" onclick="switchPage('users')">
+                            <i class="fas fa-plus"></i> Neuer Benutzer
+                        </button>
+                        <button class="btn btn-primary" onclick="switchPage('products')">
+                            <i class="fas fa-plus"></i> Neues Produkt
+                        </button>
+                        <button class="btn btn-primary" onclick="switchPage('orders')">
+                            <i class="fas fa-plus"></i> Neue Bestellung
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Page -->
+            <div id="users-page" class="page">
+                <div class="page-header">
+                    <h1>Benutzerverwaltung</h1>
+                    <button class="btn btn-primary" onclick="showUserModal()">
+                        <i class="fas fa-plus"></i> Neuer Benutzer
+                    </button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="user-search" placeholder="Benutzer suchen..." onkeyup="filterUsers()">
+                </div>
+
+                <div id="users-list" class="data-table">
+                    <div class="loading">Lädt...</div>
+                </div>
+            </div>
+
+            <!-- Products Page -->
+            <div id="products-page" class="page">
+                <div class="page-header">
+                    <h1>Produktverwaltung</h1>
+                    <button class="btn btn-primary" onclick="showProductModal()">
+                        <i class="fas fa-plus"></i> Neues Produkt
+                    </button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="product-search" placeholder="Produkt suchen..." onkeyup="filterProducts()">
+                </div>
+
+                <div id="products-list" class="data-table">
+                    <div class="loading">Lädt...</div>
+                </div>
+            </div>
+
+            <!-- Orders Page -->
+            <div id="orders-page" class="page">
+                <div class="page-header">
+                    <h1>Bestellungsverwaltung</h1>
+                    <button class="btn btn-primary" onclick="showOrderModal()">
+                        <i class="fas fa-plus"></i> Neue Bestellung
+                    </button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="order-search" placeholder="Bestellung suchen..." onkeyup="filterOrders()">
+                </div>
+
+                <div id="orders-list" class="data-table">
+                    <div class="loading">Lädt...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Benutzer hinzufügen</h2>
+                <button class="close-btn" onclick="closeUserModal()">&times;</button>
+            </div>
+            <form id="user-form" onsubmit="submitUserForm(event)">
+                <div class="form-group">
+                    <label for="user-name">Name:</label>
+                    <input type="text" id="user-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-email">E-Mail:</label>
+                    <input type="email" id="user-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-bio">Biografie:</label>
+                    <textarea id="user-bio"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="user-avatar">Avatar URL:</label>
+                    <input type="url" id="user-avatar">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Produkt hinzufügen</h2>
+                <button class="close-btn" onclick="closeProductModal()">&times;</button>
+            </div>
+            <form id="product-form" onsubmit="submitProductForm(event)">
+                <div class="form-group">
+                    <label for="product-name">Name:</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Preis (€):</label>
+                    <input type="number" id="product-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-owner">Besitzer ID:</label>
+                    <input type="number" id="product-owner" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Beschreibung:</label>
+                    <textarea id="product-description"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Modal -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Bestellung hinzufügen</h2>
+                <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <form id="order-form" onsubmit="submitOrderForm(event)">
+                <div class="form-group">
+                    <label for="order-user">Benutzer ID:</label>
+                    <input type="number" id="order-user" required>
+                </div>
+                <div class="form-group">
+                    <label for="order-product">Produkt ID:</label>
+                    <input type="number" id="order-product" required>
+                </div>
+                <div class="form-group">
+                    <label for="order-quantity">Menge:</label>
+                    <input type="number" id="order-quantity" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="order-price">Gesamtpreis (€):</label>
+                    <input type="number" id="order-price" step="0.01" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeOrderModal()">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

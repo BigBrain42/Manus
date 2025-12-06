@@ -1,0 +1,14 @@
+{
+  "name": "supabase-backend-api",
+  "version": "1.0.0",
+  "description": "Python FastAPI Backend für Supabase Integration",
+  "type": "module",
+  "scripts": {
+    "dev": "python main.py",
+    "start": "python main.py",
+    "test": "python -m pytest tests/ -v"
+  },
+  "keywords": ["supabase", "fastapi", "python", "backend", "api"],
+  "author": "",
+  "license": "MIT"
+}
